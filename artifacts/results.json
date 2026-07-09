@@ -1,0 +1,22 @@
+{
+  "rnn": {
+    "accuracy": 0.7262,
+    "f1_score": 0.7129,
+    "roc_auc": 0.7816
+  },
+  "lstm": {
+    "accuracy": 0.9932,
+    "f1_score": 0.9929,
+    "roc_auc": 0.9997
+  },
+  "gru": {
+    "accuracy": 0.9984,
+    "f1_score": 0.9984,
+    "roc_auc": 1.0
+  },
+  "tfidf_lr": {
+    "accuracy": 0.9922,
+    "f1_score": 0.9918,
+    "roc_auc": 0.9995
+  }
+}
