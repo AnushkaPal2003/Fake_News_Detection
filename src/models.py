@@ -28,7 +28,7 @@ def build_rnn(embedding_matrix):
 
 
 def build_lstm(embedding_matrix):
-    # LSTM — handles long-range dependencies better than RNN
+    # LSTM - handles long-range dependencies better than RNN
     model = Sequential([
         Embedding(
             input_dim=MAX_VOCAB_SIZE,
@@ -38,7 +38,7 @@ def build_lstm(embedding_matrix):
             trainable=False
         ),
         SpatialDropout1D(0.2),
-        LSTM(64, dropout=0.2, recurrent_dropout=0.2),
+        LSTM(64, dropout=0.2),
         Dense(32, activation="relu"),
         Dropout(0.3),
         Dense(1, activation="sigmoid")
@@ -48,7 +48,7 @@ def build_lstm(embedding_matrix):
 
 
 def build_gru(embedding_matrix):
-    # GRU — faster than LSTM, similar performance
+    # GRU - faster than LSTM, similar performance
     model = Sequential([
         Embedding(
             input_dim=MAX_VOCAB_SIZE,
@@ -58,7 +58,7 @@ def build_gru(embedding_matrix):
             trainable=False
         ),
         SpatialDropout1D(0.2),
-        GRU(64, dropout=0.2, recurrent_dropout=0.2),
+        GRU(64, dropout=0.2),
         Dense(32, activation="relu"),
         Dropout(0.3),
         Dense(1, activation="sigmoid")
