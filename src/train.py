@@ -67,6 +67,9 @@ def train_deep_models(X_train, X_test, y_train, y_test, embedding_matrix):
 
 def train_baseline(X_train_raw, X_test_raw, y_train, y_test):
     # TF-IDF + Logistic Regression baseline
+    # X_train_raw/X_test_raw/y_train/y_test all come from the SAME split
+    # produced by preprocess() — no separate reload/resplit here, so row
+    # counts always match.
     print("\n--- Training Baseline (TF-IDF + Logistic Regression) ---")
 
     with mlflow.start_run(run_name="TF-IDF_LR_Baseline"):
@@ -107,30 +110,22 @@ def train_baseline(X_train_raw, X_test_raw, y_train, y_test):
 def run_training(data_dir="data"):
     mlflow.set_experiment("fake-news-detection")
 
-    # preprocess
+    # preprocess — now returns raw text splits (X_train_raw, X_test_raw)
+    # alongside the padded sequences, all from the same split/filter, so
+    # nothing downstream needs to reload or resplit the data.
     print("Preprocessing data...")
-    X_train_pad, X_test_pad, y_train, y_test, tokenizer = preprocess(data_dir)
+    X_train_pad, X_test_pad, y_train, y_test, tokenizer, X_train_raw, X_test_raw = preprocess(data_dir)
 
-    # load raw text for Word2Vec and baseline
-    from src.preprocess import load_data, clean_text
-    import pandas as pd
-    df = load_data(data_dir)
-    df["content"] = (df["title"] + " " + df["text"]).apply(clean_text)
-    texts = df["content"].values
-
-    # train Word2Vec
+    # train Word2Vec on the training text only (avoids leaking test text
+    # into the embeddings)
     print("\nTraining Word2Vec embeddings...")
-    w2v_model = train_word2vec(texts)
+    w2v_model = train_word2vec(X_train_raw)
     embedding_matrix = build_embedding_matrix(tokenizer, w2v_model)
 
     # train deep models
     deep_results = train_deep_models(X_train_pad, X_test_pad, y_train, y_test, embedding_matrix)
 
-    # train baseline
-    from sklearn.model_selection import train_test_split
-    X_train_raw, X_test_raw, _, _ = train_test_split(
-        texts, df["label"].values, test_size=0.2, random_state=42
-    )
+    # train baseline — reuses the exact same split, no mismatch possible
     baseline_results = train_baseline(X_train_raw, X_test_raw, y_train, y_test)
 
     # combine all results

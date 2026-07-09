@@ -49,7 +49,9 @@ def preprocess(data_dir="data"):
     df["content"] = df["title"] + " " + df["text"]
     df["content"] = df["content"].apply(clean_text)
 
-    # remove empty rows
+    # remove empty rows — this is the ONLY filtering step, applied once,
+    # so every downstream split (deep models and baseline) sees the same
+    # row count and the same train/test split.
     df = df[df["content"].str.len() > 10].reset_index(drop=True)
 
     # split
@@ -78,4 +80,9 @@ def preprocess(data_dir="data"):
     print(f"Train size: {len(X_train_pad)}, Test size: {len(X_test_pad)}")
     print(f"Vocab size: {len(tokenizer.word_index)}")
 
-    return X_train_pad, X_test_pad, y_train, y_test, tokenizer
+    # Return raw (untokenized) text splits too — X_train/X_test here are the
+    # raw cleaned strings before tokenization, from the SAME split used for
+    # the padded sequences above. The baseline (TF-IDF+LR) should reuse these
+    # directly instead of re-loading and re-splitting the data, which is what
+    # caused the row-count mismatch before.
+    return X_train_pad, X_test_pad, y_train, y_test, tokenizer, X_train, X_test
