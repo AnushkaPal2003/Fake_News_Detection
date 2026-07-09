@@ -1,0 +1,53 @@
+name: CI - Fake News Detection
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run preprocessing test
+        run: |
+          python -c "from src.preprocess import clean_text; assert clean_text('Hello World! 123') == 'hello world'; print('preprocess test passed')"
+
+      - name: Run model build test
+        run: |
+          python -c "
+          import numpy as np
+          from src.models import get_model
+          dummy_matrix = np.zeros((20000, 100))
+          for name in ['rnn', 'lstm', 'gru']:
+              model = get_model(name, dummy_matrix)
+              print(f'{name.upper()} model built successfully')
+          "
+
+      - name: Check Streamlit app syntax
+        run: |
+          python -m py_compile app.py
+          echo 'app.py syntax OK'

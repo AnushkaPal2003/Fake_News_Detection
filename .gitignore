@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Large model artifacts (regenerate via training, don't push to GitHub)
+artifacts/
+*.h5
+*.pkl
+*.model
+*.npy
+
+# Dataset (large CSVs — keep locally or in Drive, not in git)
+data/
+*.csv
+
+# MLflow tracking runs
+mlruns/
+mlflow.db
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Colab-generated zip
+artifacts.zip
+
+# Environment variables / secrets
+.env
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log

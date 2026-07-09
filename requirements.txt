@@ -1,0 +1,10 @@
+pandas>=2.2.0
+numpy>=1.26.0
+scikit-learn>=1.4.0
+tensorflow>=2.16.0
+gensim>=4.3.2
+mlflow>=2.8.0
+streamlit>=1.28.0
+matplotlib>=3.7.2
+seaborn>=0.12.2
+kaggle>=1.5.16
