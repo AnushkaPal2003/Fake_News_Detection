@@ -69,6 +69,7 @@ Open `http://localhost:5000` to compare experiments.
 ```bash
 streamlit run app.py
 ```
+Streamlit: https://fakenewsdetection-ixghkpu55qymqw53hqgaty.streamlit.app/
 
 ## Key Design Decisions
 - **Word2Vec over random embeddings**: trained on the actual news corpus for domain-specific representations
